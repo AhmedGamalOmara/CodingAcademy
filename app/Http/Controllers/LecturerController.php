@@ -56,7 +56,8 @@ class LecturerController extends Controller
             'phone' => $request->phone,
             'image' => $imagePath,
         ]);
-        return response()->json($lecturer);
+        
+        return response()->json($lecturer,200);
     }
 
     public function edit($id)

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 
 class AuthController extends Controller
@@ -102,11 +101,13 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
+
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['email or password is incorrect.'],
-            ]);
-        };
+            return response()->json([
+                'error' => 'Email or password is incorrect.'
+            ], 422);
+        }
+        
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

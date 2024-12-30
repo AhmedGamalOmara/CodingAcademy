@@ -34,7 +34,6 @@ class UserController extends Controller
             'phone.required' => 'رقم الهاتف مطلوب.',
             'phone.numeric' => 'يجب أن يحتوي رقم الهاتف على أرقام فقط.',
             'phone.digits_between' => 'يجب أن يكون رقم الهاتف بين 8 و15 رقمًا.',
-            'type.in' => 'نوع المستخدم يجب أن يكون 0 أو 1.',
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
@@ -45,7 +44,6 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'phone' => 'required|numeric|digits_between:8,15',
-            'type' => 'in:0,1',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ],$messages);
 
@@ -55,7 +53,7 @@ class UserController extends Controller
             ], 422);
         };
 
-        $type = $request->type ?? 0; 
+        // $type = $request->type ?? 0; 
 
         $imagePath = 'images/def.png';
         if ($request->hasFile('image')) {
@@ -67,7 +65,6 @@ class UserController extends Controller
             'email'=> $request->email,
             'password'=> Hash::make($request->password),
             'phone' => $request->phone,
-            'type' => $type,
             'image' => $imagePath,
         ]);
         return response()->json($user);
@@ -97,7 +94,6 @@ class UserController extends Controller
             'phone.required' => 'رقم الهاتف مطلوب.',
             'phone.numeric' => 'يجب أن يحتوي رقم الهاتف على أرقام فقط.',
             'phone.digits_between' => 'يجب أن يكون رقم الهاتف بين 8 و15 رقمًا.',
-            'type.in' => 'نوع المستخدم يجب أن يكون 0 أو 1.',
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
@@ -108,7 +104,6 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'phone' => 'required|numeric|digits_between:8,15',
-            'type' => 'in:0,1',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ],$messages);
 
@@ -118,7 +113,7 @@ class UserController extends Controller
             ], 422);
         };
 
-        $type = $request->type ?? 0; 
+        // $type = $request->type ?? 0; 
 
         $imagePath = 'images/def.png';
         if ($request->hasFile('image')) {
@@ -130,7 +125,6 @@ class UserController extends Controller
             'email'=> $request->email,
             'password'=> Hash::make($request->password),
             'phone' => $request->phone,
-            'type' => $type,
             'image' => $imagePath,
         ]);
 
