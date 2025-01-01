@@ -117,5 +117,8 @@ class LecturerController extends Controller
     {
         $lecturer = Lecturer::findOrFail($id);
         $lecturer->delete();
+        return response()->json([
+            'succec'=>'بنجاح [ ' .$lecturer->name. ' ] تم حذف المحاضر ',
+        ]);
     }
 }

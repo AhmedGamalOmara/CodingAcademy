@@ -136,5 +136,8 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
+        return response()->json([
+            'succec'=>'بنجاح [ ' .$user->name. ' ] تم حذف المستخدم ',
+        ]);
     }
 }

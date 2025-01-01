@@ -139,5 +139,8 @@ class CourseController extends Controller
     {
         $course = Course::findOrFail($id);
         $course->delete();
+        return response()->json([
+            'succec'=>'بنجاح [ ' .$course->name. ' ] تم حذف كورس ',
+        ]);
     }
 }
