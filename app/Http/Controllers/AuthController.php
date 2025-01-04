@@ -28,7 +28,6 @@ class AuthController extends Controller
             'phone.required' => 'رقم الهاتف مطلوب.',
             'phone.numeric' => 'يجب أن يحتوي رقم الهاتف على أرقام فقط.',
             'phone.digits_between' => 'يجب أن يكون رقم الهاتف بين 8 و15 رقمًا.',
-            'type.in' => 'نوع المستخدم يجب أن يكون 0 أو 1.',
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
@@ -39,7 +38,6 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'phone' => 'required|numeric|digits_between:8,15',
-            'type' => 'in:0,1',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ],$messages);
 

@@ -32,7 +32,6 @@ class CourseController extends Controller
             'time.integer' => 'مدة الدراسة يجب أن تكون عددًا صحيحًا.',
             'time.min' => 'مدة الدراسة يجب أن تكون على الأقل شهرًا واحدًا.',
             'time.max' => 'مدة الدراسة لا يمكن أن تتجاوز 6 شهور .',
-            'Reservations.in' => 'حالة الحجز يجب أن تكون إما booked أو no.',
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
@@ -44,7 +43,6 @@ class CourseController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric',
             'time' => 'required|integer|min:1|max:6', 
-            'Reservations' => 'in:booked,nobooked', 
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
         ],$messages);
 
@@ -65,7 +63,6 @@ class CourseController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'time' => $request->time, 
-            'Reservations' => $request->Reservations,
             'image' => $imagePath,
         ]);
 

@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
@@ -17,15 +17,14 @@ return new class extends Migration
             $table->string('phone');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['0', '1'])->default('0');
-            $table->enum('reservations', ['0', '1'])->default('0');
+            $table->tinyInteger('role')->default(0)->comment('0: User, 1: Admin');
+            $table->tinyInteger('reservations')->default(0)->comment('0: nobooked, 1: booked');
             $table->string('image')->nullable();
-            $table->foreignId('get_id')->nullable()->constrained('get')->onDelete('set null');
-            $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
+            $table->unsignedBigInteger('get_id')->nullable();#fk
             $table->timestamps();
         });
     }
+        
 
     /**
      * Reverse the migrations.
