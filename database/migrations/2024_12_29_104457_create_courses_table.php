@@ -18,8 +18,9 @@ return new class extends Migration
             $table->string('description');
             $table->decimal('price', 10, 2); 
             $table->time('time'); 
-            $table->enum('Reservations', ['booked', 'nobooked']);
             $table->string('image')->nullable();
+            $table->foreignId('teach_id')->nullable()->constrained('teach')->onDelete('set null');
+            $table->foreignId('get_id')->nullable()->constrained('get')->onDelete('set null');
             $table->timestamps();
         });
     }
