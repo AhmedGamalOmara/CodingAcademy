@@ -19,6 +19,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+       
         $messages = [
             'name.required' => 'الاسم مطلوب.',
             'name.string' => 'يجب أن يكون الاسم نصًا.',
@@ -37,6 +38,7 @@ class UserController extends Controller
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
+            'role.in' => 'يجب أن تكون القيمة المدخلة للدور إما 0 (مستخدم) أو 1 (مشرف).',
         ];
 
         $validator = Validator::make($request->all(),[
@@ -44,6 +46,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'phone' => 'required|numeric|digits_between:8,15',
+            'role' => 'required|in:0,1',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ],$messages);
 
@@ -65,6 +68,7 @@ class UserController extends Controller
             'email'=> $request->email,
             'password'=> Hash::make($request->password),
             'phone' => $request->phone,
+            'role'=> $request->role ?? 0,
             'image' => $imagePath,
         ]);
         return response()->json($user);
@@ -97,14 +101,16 @@ class UserController extends Controller
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
+            'role.in' => 'يجب أن تكون القيمة المدخلة للدور إما 0 (مستخدم) أو 1 (مشرف).',
         ];
 
         $validator = Validator::make($request->all(),[
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'required|string|min:8',
             'phone' => 'required|numeric|digits_between:8,15',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'role' => 'nullable|in:0,1',
         ],$messages);
 
         if ($validator->fails()) {
@@ -126,6 +132,7 @@ class UserController extends Controller
             'password'=> Hash::make($request->password),
             'phone' => $request->phone,
             'image' => $imagePath,
+            'role'=> $request->role,
         ]);
 
         return response()->json($user);
