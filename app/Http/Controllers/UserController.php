@@ -46,7 +46,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'phone' => 'required|numeric|digits_between:8,15',
-            'role' => 'required|in:0,1',
+            'role' => 'nullable|in:0,1',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ],$messages);
 
@@ -68,7 +68,7 @@ class UserController extends Controller
             'email'=> $request->email,
             'password'=> Hash::make($request->password),
             'phone' => $request->phone,
-            'role'=> $request->role ?? 0,
+            'role'=> $request->role,
             'image' => $imagePath,
         ]);
         return response()->json($user);
