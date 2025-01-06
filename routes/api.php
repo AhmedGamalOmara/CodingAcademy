@@ -29,7 +29,7 @@ Route::post('/login', [AuthController::class,'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class,'logout']);
 
 
-Route::group(['prefix'=> 'user'], function () {
+Route::group(['prefix'=> 'user','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [UserController::class,'index']);
     Route::post('/store', [UserController::class,'store']);
     Route::get('/{id}', [Usercontroller::class,'edit']);

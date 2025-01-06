@@ -36,6 +36,7 @@ class LecturerController extends Controller
             'name' => 'required|string|max:255',
             'notes' => 'required|string',
             'phone' => 'required|numeric|digits_between:8,15',
+            'user_add_id' => 'nullable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ],$messages);
 
@@ -54,6 +55,7 @@ class LecturerController extends Controller
             'name'=> $request->name,
             'notes'=> $request->notes,
             'phone' => $request->phone,
+            'user_add_id' => $request->user_add_id,
             'image' => $imagePath,
         ]);
         

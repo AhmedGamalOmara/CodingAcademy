@@ -6,15 +6,32 @@ use Illuminate\Http\Request;
 use App\models\Course;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\User;
 
 class CourseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::all();
-        return response()->json([
-            "Courses : "=> $courses,
-        ]);
+       // قراءة عدد العناصر في الصفحة من الطلب مع قيمة افتراضية
+       $perPage = $request->get('per_page', 10); // عدد العناصر الافتراضي 10
+       $page = $request->get('page', 1); // الصفحة الافتراضية هي 1
+   
+       // جلب البيانات مع تحديد الإزاحة وعدد العناصر
+       $query = User::query();
+       $total = $query->count(); // العدد الإجمالي للعناصر
+       $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+   
+       // حساب العدد الإجمالي للصفحات
+       $totalPages = ceil($total / $perPage);
+   
+       // بناء الاستجابة
+       return response()->json([
+           'data' => $data,
+           'current_page' => $page,
+           'per_page' => $perPage,
+           'total' => $total,
+           'total_pages' => $totalPages,
+       ]);
     }
 
     public function store(Request $request)
@@ -43,6 +60,7 @@ class CourseController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric',
             'time' => 'required|integer|min:1|max:6', 
+            'user_add_id' => 'nullable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
         ],$messages);
 
@@ -62,7 +80,8 @@ class CourseController extends Controller
             'contant' => $request->contant,
             'description' => $request->description,
             'price' => $request->price,
-            'time' => $request->time, 
+            'time' => $request->time,
+            'user_add_id' => $request->user_add_id,
             'image' => $imagePath,
         ]);
 

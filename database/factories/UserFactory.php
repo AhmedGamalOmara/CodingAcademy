@@ -19,12 +19,16 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'phone' => fake()->phoneNumber(),
+            'role' => fake()->randomElement([0, 1]), // 0 = مستخدم، 1 = مشرف
+            'reservations' => fake()->randomElement([0, 1]), // 0 = غير محجوز، 1 = محجوز
+            'user_add_id' => fake()->uuid(),
+            'image' => fake()->imageUrl(), // صورة عشوائية
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'remember_token' => Str::random(10),
+            'password' => bcrypt('password'), // كلمة مرور مشفرة
         ];
     }
+    
 
     /**
      * Indicate that the model's email address should be unverified.

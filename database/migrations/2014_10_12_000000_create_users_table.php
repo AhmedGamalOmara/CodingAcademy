@@ -17,9 +17,10 @@ return new class extends Migration
             $table->string('phone');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('image')->nullable();
             $table->tinyInteger('role')->default(0)->comment('0: User, 1: Admin');
             $table->tinyInteger('reservations')->default(0)->comment('0: nobooked, 1: booked');
-            $table->string('image')->nullable();
+            $table->string('user_add_id')->nullable();
             $table->unsignedBigInteger('get_id')->nullable();#fk
             $table->timestamps();
         });

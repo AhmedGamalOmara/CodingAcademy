@@ -9,14 +9,37 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $users = User::all();
+    //     return response()->json([
+    //         "users : "=> $users,
+    //     ]);
+    // }
+    public function index(Request $request)
     {
-        $users = User::all();
+        // قراءة عدد العناصر في الصفحة من الطلب مع قيمة افتراضية
+        $perPage = $request->get('per_page', 10); // عدد العناصر الافتراضي 10
+        $page = $request->get('page', 1); // الصفحة الافتراضية هي 1
+    
+        // جلب البيانات مع تحديد الإزاحة وعدد العناصر
+        $query = User::query();
+        $total = $query->count(); // العدد الإجمالي للعناصر
+        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+    
+        // حساب العدد الإجمالي للصفحات
+        $totalPages = ceil($total / $perPage);
+    
+        // بناء الاستجابة
         return response()->json([
-            "users : "=> $users,
+            'data' => $data,
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total' => $total,
+            'total_pages' => $totalPages,
         ]);
     }
-
+    
     public function store(Request $request)
     {
        
@@ -39,6 +62,7 @@ class UserController extends Controller
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
             'role.in' => 'يجب أن تكون القيمة المدخلة للدور إما 0 (مستخدم) أو 1 (مشرف).',
+            'reservations.in' => 'يجب أن تكون القيمة المدخلة للدور إما 0 ( غير محجوز) أو 1 (محجوز).',
         ];
 
         $validator = Validator::make($request->all(),[
@@ -47,6 +71,8 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
             'phone' => 'required|numeric|digits_between:8,15',
             'role' => 'nullable|in:0,1',
+            'reservations' => 'nullable|in:0,1',
+            'user_add_id' => 'nullable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ],$messages);
 
@@ -69,6 +95,8 @@ class UserController extends Controller
             'password'=> Hash::make($request->password),
             'phone' => $request->phone,
             'role'=> $request->role,
+            'reservations'=> $request->reservations,
+            'user_add_id'=> $request->user_add_id,
             'image' => $imagePath,
         ]);
         return response()->json($user);
@@ -102,6 +130,7 @@ class UserController extends Controller
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
             'role.in' => 'يجب أن تكون القيمة المدخلة للدور إما 0 (مستخدم) أو 1 (مشرف).',
+            'reservations.in' => 'يجب أن تكون القيمة المدخلة للدور إما 0 ( غير محجوز) أو 1 (محجوز).',
         ];
 
         $validator = Validator::make($request->all(),[
@@ -109,8 +138,9 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'required|string|min:8',
             'phone' => 'required|numeric|digits_between:8,15',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'role' => 'nullable|in:0,1',
+            'reservations' => 'nullable|in:0,1',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ],$messages);
 
         if ($validator->fails()) {
@@ -131,8 +161,9 @@ class UserController extends Controller
             'email'=> $request->email,
             'password'=> Hash::make($request->password),
             'phone' => $request->phone,
-            'image' => $imagePath,
             'role'=> $request->role,
+            'reservations'=> $request->reservations,
+            'image' => $imagePath,
         ]);
 
         return response()->json($user);
