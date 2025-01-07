@@ -20,9 +20,13 @@ return new class extends Migration
         $table->decimal('price', 10, 2);
         $table->time('time');
         $table->string('image')->nullable();
+        $table->unsignedBigInteger('user_add_id')->nullable();
         $table->unsignedBigInteger('teach_id')->nullable();
         $table->unsignedBigInteger('get_id')->nullable();
         $table->timestamps();
+    });
+    Schema::table('courses', function (Blueprint $table) {
+        $table->foreign('user_add_id')->references('id')->on('users')->onDelete('set null');
     });
 }
 

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\models\Course;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
+
 
 class CourseController extends Controller
 {
@@ -17,7 +17,7 @@ class CourseController extends Controller
        $page = $request->get('page', 1); // الصفحة الافتراضية هي 1
    
        // جلب البيانات مع تحديد الإزاحة وعدد العناصر
-       $query = User::query();
+       $query = Course::query();
        $total = $query->count(); // العدد الإجمالي للعناصر
        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
    

@@ -16,6 +16,7 @@ class Course extends Model
         'price',
         'time',
         'Reservations',
+        'user_add_id',
         'image',
     ];
 }
