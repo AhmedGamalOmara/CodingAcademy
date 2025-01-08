@@ -6,11 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+
+    protected $table = 'get';
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
+        
         // Create the 'get' table
         Schema::create('get', function (Blueprint $table) {
             $table->id();
@@ -27,6 +31,8 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('courses_id')->references('id')->on('courses')->onDelete('cascade');
         });
+
+        
     }
 
     /**

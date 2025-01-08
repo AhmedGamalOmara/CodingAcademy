@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LecturerController;
+use App\Http\Controllers\GetController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,7 +38,14 @@ Route::group(['prefix'=> 'user','middleware'=>'auth:sanctum'], function () {
     Route::delete('/{id}', [Usercontroller::class,'destroy']); 
 });
 
-Route::group(['prefix'=> 'course'], function () {
+
+Route::group(['prefix'=> 'get','middleware'=>'auth:sanctum'], function () {
+    Route::post('/subscribe', [GetController::class, 'subscribe']); // الاشتراك في كورس
+    Route::post('/unsubscribe', [GetController::class, 'unsubscribe']); // إلغاء الاشتراك
+    Route::get('/user-courses/{user_id}', [GetController::class, 'getUserCourses']); // عرض الكورسات
+});
+
+Route::group(['prefix'=> 'course','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [CourseController::class,'index']);
     Route::post('/store', [CourseController::class,'store']);
     Route::get('/{id}', [CourseController::class,'edit']);

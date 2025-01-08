@@ -19,4 +19,11 @@ class Course extends Model
         'user_add_id',
         'image',
     ];
+
+    public function subscribers()
+    {
+        return $this->hasMany(Get::class, 'courses_id');
+    }
+
+
 }
