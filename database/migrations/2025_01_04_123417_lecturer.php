@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('phone');
             $table->text('notes')->nullable();
             $table->string('image')->nullable();
+            $table->unsignedBigInteger('user_add_id')->nullable();
             $table->unsignedBigInteger('teach_id')->nullable();
             $table->timestamps();
         });

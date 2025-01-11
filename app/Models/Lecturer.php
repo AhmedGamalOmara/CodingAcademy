@@ -13,6 +13,7 @@ class Lecturer extends Model
         'name',
         'phone',
         'notes',
+        'user_add_id',
         'image',
     ];
 
