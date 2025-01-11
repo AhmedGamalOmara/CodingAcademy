@@ -25,5 +25,10 @@ class Course extends Model
         return $this->hasMany(Get::class, 'courses_id');
     }
 
+    public function teach()
+{
+    return $this->hasMany(Teach::class, 'courses_id');
+}
+
 
 }

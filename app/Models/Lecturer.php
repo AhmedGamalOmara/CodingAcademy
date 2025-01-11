@@ -15,4 +15,11 @@ class Lecturer extends Model
         'notes',
         'image',
     ];
+
+
+    public function teach()
+    {
+        return $this->hasMany(Teach::class, 'lecturer_id');
+    }
+
 }

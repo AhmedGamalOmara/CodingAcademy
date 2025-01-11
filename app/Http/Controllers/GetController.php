@@ -88,10 +88,28 @@ class GetController extends Controller
             return response()->json(['message' => 'المستخدم غير موجود.'], 404);
         }
 
-        // استرجاع الكورسات التي اشترك فيها المستخدم
+        // استرجاع الكورسات التي اشترك فيها المستخدم 
         $courses = $user->subscriptions()->with('course')->get();
 
         return response()->json(['message' => 'قائمة الكورسات المشترك بها المستخدم.', 'courses' => $courses]);
+    }
+
+    /**
+     * وظيفة عرض قائمة المستخدمين  المشتركين فى هذا الكورس.
+     */
+
+    public function getCourseUsers($courses_id)
+    {
+        $course =Course::find($courses_id);
+
+        if (!$course) {
+            return response()->json(['message' => 'الكورس غير موجود.'], 404);
+        }
+
+        // استرجاع الكورسات التي اشترك فيها المستخدم
+        $courses = $course->subscribers()->with('user')->get();
+
+        return response()->json(['message' => 'قائمة المستخدمين المشتركين بهذا الكورس.', 'courses' => $courses]);
     }
 }
 

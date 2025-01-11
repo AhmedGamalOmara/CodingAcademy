@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\GetController;
+use App\Http\Controllers\TeachController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,7 @@ Route::group(['prefix'=> 'get','middleware'=>'auth:sanctum'], function () {
     Route::post('/subscribe', [GetController::class, 'subscribe']); // الاشتراك في كورس
     Route::post('/unsubscribe', [GetController::class, 'unsubscribe']); // إلغاء الاشتراك
     Route::get('/user-courses/{user_id}', [GetController::class, 'getUserCourses']); // عرض الكورسات
+    Route::get('/course-users/{courses_id}', [GetController::class, 'getCourseUsers']); // عرض المسخدمين
 });
 
 Route::group(['prefix'=> 'course','middleware'=>'auth:sanctum'], function () {
@@ -51,6 +53,14 @@ Route::group(['prefix'=> 'course','middleware'=>'auth:sanctum'], function () {
     Route::get('/{id}', [CourseController::class,'edit']);
     Route::post('/{id}', [CourseController::class,'update']);
     Route::delete('/{id}', [CourseController::class,'destroy']); 
+});
+
+Route::group(['prefix'=> 'teach','middleware'=>'auth:sanctum'], function () {
+    Route::post('/teach/add', [TeachController::class, 'addLecturerToCourse']);
+    Route::put('/teach/update/{id}', [TeachController::class, 'updateLecturerInCourse']);
+    Route::get('/teach/course/{id}', [TeachController::class, 'getLecturersForCourse']);
+    Route::delete('/teach/remove/{id}', [TeachController::class, 'removeLecturerFromCourse']);
+    Route::delete('/course/delete/{id}', [TeachController::class, 'deleteCourse']);
 });
 
 Route::group(['prefix'=> 'lecturer'], function () {
