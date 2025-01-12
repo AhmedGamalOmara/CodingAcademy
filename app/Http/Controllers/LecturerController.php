@@ -3,16 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Lecturer;
 use Illuminate\Support\Facades\Validator;
+use App\models\Lecturer;
+use App\models\User;
 
 class LecturerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $lecturers = Lecturer::all();
+        // $lecturers = Lecturer::all();
+        // return response()->json([
+        //     "Lecturers : "=> $lecturers,
+        // ]);
+
+
+        // قراءة عدد العناصر في الصفحة من الطلب مع قيمة افتراضية
+        $perPage = $request->get('per_page', 10); // عدد العناصر الافتراضي 10
+        $page = $request->get('page', 1); // الصفحة الافتراضية هي 1
+
+        // جلب البيانات مع تحديد الإزاحة وعدد العناصر
+        $query = User::query();
+        $total = $query->count(); // العدد الإجمالي للعناصر
+        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+
+        // حساب العدد الإجمالي للصفحات
+        $totalPages = ceil($total / $perPage);
+
+        // بناء الاستجابة
         return response()->json([
-            "Lecturers : "=> $lecturers,
+            'data' => $data,
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total' => $total,
+            'total_pages' => $totalPages,
         ]);
     }
 
@@ -26,47 +49,53 @@ class LecturerController extends Controller
             'notes.string' => 'يجب أن يكون الوصف نصًا.',
             'phone.required' => 'رقم الهاتف مطلوب.',
             'phone.numeric' => 'يجب أن يحتوي رقم الهاتف على أرقام فقط.',
-            'phone.digits_between' => 'يجب أن يكون رقم الهاتف بين 8 و15 رقمًا.',
+            'phone.digits_between' => 'يجب أن يكون رقم الهاتف بين 10 و15 رقمًا.',
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
         ];
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'notes' => 'required|string',
-            'phone' => 'required|numeric|digits_between:8,15',
+            'phone' => 'required|numeric|digits_between:10,15',
             'user_add_id' => 'nullable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ],$messages);
+        ], $messages);
 
         if ($validator->fails()) {
             return response()->json([
-                'error'=> $validator->errors()->first(),
+                'error' => $validator->errors()->first(),
             ], 422);
         };
 
-        $imagePath = 'images/def.png';
+
+        // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');
+            // رفع الصورة وتخزينها في مجلد التخزين
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('images'), $imageName);
+            $imagePath = env('APP_URL') . '/public/images/' . $imageName;
+        } else {
+            $imagePath = url('public/images/def.png'); // رابط الصورة الافتراضية بالكامل
         }
 
+
         $lecturer = Lecturer::create([
-            'name'=> $request->name,
-            'notes'=> $request->notes,
+            'name' => $request->name,
+            'notes' => $request->notes,
             'phone' => $request->phone,
             'user_add_id' => $request->user_add_id,
             'image' => $imagePath,
         ]);
-        
-        return response()->json($lecturer,200);
+
+        return response()->json($lecturer, 200);
     }
 
-    public function edit($id)
+    public function show($id)
     {
         $lecturer = Lecturer::find($id);
         return response()->json($lecturer);
-
     }
 
     public function update(Request $request, $id)
@@ -85,34 +114,39 @@ class LecturerController extends Controller
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
         ];
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'notes' => 'required|string',
             'phone' => 'required|numeric|digits_between:8,15',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ],$messages);
+        ], $messages);
 
         if ($validator->fails()) {
             return response()->json([
-                'error'=> $validator->errors()->first(),
+                'error' => $validator->errors()->first(),
             ], 422);
         };
 
 
-        $imagePath = 'images/def.png';
+        $lecturer = Lecturer::findOrFail($id);
+
+        $data = [
+            'name' => $request->name,
+            'notes' => $request->notes,
+            'phone' => $request->phone,
+        ];
+
+        // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');
+            // رفع الصورة وتخزينها في مجلد التخزين
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('images'), $imageName);
+            $data['image'] = env('APP_URL') . '/public/images/' . $imageName;
         }
 
-        $lecturer = Lecturer::findOrFail($id)->update([
-            'name'=> $request->name,
-            'notes'=> $request->notes,
-            'phone' => $request->phone,
-            'image' => $imagePath,
-        ]);
+        $lecturer->update($data);
 
         return response()->json($lecturer);
-
     }
 
     public function destroy($id)
@@ -120,7 +154,7 @@ class LecturerController extends Controller
         $lecturer = Lecturer::findOrFail($id);
         $lecturer->delete();
         return response()->json([
-            'succec'=>'بنجاح [ ' .$lecturer->name. ' ] تم حذف المحاضر ',
+            'succec' => 'بنجاح [ ' . $lecturer->name . ' ] تم حذف المحاضر ',
         ]);
     }
 }

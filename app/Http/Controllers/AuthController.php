@@ -49,10 +49,16 @@ class AuthController extends Controller
 
         // $type = $request->type ?? 0; 
 
-        $imagePath = 'images/def.png';
+        $imagePath = url('public/images/def.png'); // رابط الصورة الافتراضية بالكامل
+
+        // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');
+            // رفع الصورة وتخزينها في مجلد التخزين
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('images'), $imageName);
+            $imagePath = env('APP_URL') . '/public/images/' . $imageName;
         }
+
 
         $user = User::create([
             'name'=> $request->name,

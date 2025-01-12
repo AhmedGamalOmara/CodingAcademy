@@ -12,26 +12,26 @@ class CourseController extends Controller
 {
     public function index(Request $request)
     {
-       // قراءة عدد العناصر في الصفحة من الطلب مع قيمة افتراضية
-       $perPage = $request->get('per_page', 10); // عدد العناصر الافتراضي 10
-       $page = $request->get('page', 1); // الصفحة الافتراضية هي 1
-   
-       // جلب البيانات مع تحديد الإزاحة وعدد العناصر
-       $query = Course::query();
-       $total = $query->count(); // العدد الإجمالي للعناصر
-       $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
-   
-       // حساب العدد الإجمالي للصفحات
-       $totalPages = ceil($total / $perPage);
-   
-       // بناء الاستجابة
-       return response()->json([
-           'data' => $data,
-           'current_page' => $page,
-           'per_page' => $perPage,
-           'total' => $total,
-           'total_pages' => $totalPages,
-       ]);
+        // قراءة عدد العناصر في الصفحة من الطلب مع قيمة افتراضية
+        $perPage = $request->get('per_page', 10); // عدد العناصر الافتراضي 10
+        $page = $request->get('page', 1); // الصفحة الافتراضية هي 1
+
+        // جلب البيانات مع تحديد الإزاحة وعدد العناصر
+        $query = Course::query();
+        $total = $query->count(); // العدد الإجمالي للعناصر
+        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+
+        // حساب العدد الإجمالي للصفحات
+        $totalPages = ceil($total / $perPage);
+
+        // بناء الاستجابة
+        return response()->json([
+            'data' => $data,
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total' => $total,
+            'total_pages' => $totalPages,
+        ]);
     }
 
     public function store(Request $request)
@@ -54,26 +54,33 @@ class CourseController extends Controller
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
         ];
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'contant' => 'required|string',
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'time' => 'required|integer|min:1|max:6', 
+            'time' => 'required|integer|min:1|max:6',
             'user_add_id' => 'nullable',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
-        ],$messages);
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], $messages);
 
         if ($validator->fails()) {
             return response()->json([
-                'error'=> $validator->errors()->first(),
+                'error' => $validator->errors()->first(),
             ], 422);
         };
 
-        $imagePath = 'images/default.png';
+
+        // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('images', 'public');
-    }
+            // رفع الصورة وتخزينها في مجلد التخزين
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('images'), $imageName);
+            $imagePath = env('APP_URL') . '/public/images/' . $imageName;
+        } else {
+            $imagePath = url('public/images/def.png'); // رابط الصورة الافتراضية بالكامل 
+        }
+
 
         $course = Course::create([
             'name' => $request->name,
@@ -92,7 +99,6 @@ class CourseController extends Controller
     {
         $course = Course::find($id);
         return response()->json($course);
-
     }
 
     public function update(Request $request, $id)
@@ -115,37 +121,42 @@ class CourseController extends Controller
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
         ];
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'contant' => 'required|string',
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'time' => 'required|integer|min:1|max:6', 
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
-        ],$messages);
+            'time' => 'required|integer|min:1|max:6',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], $messages);
 
         if ($validator->fails()) {
             return response()->json([
-                'error'=> $validator->errors()->first(),
+                'error' => $validator->errors()->first(),
             ], 422);
         };
 
-        $imagePath = 'images/default.png';
-        if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('images', 'public');
-    }
+        $course = Course::findOrFail($id);
 
-        $course = Course::findOrFail($id)->update([
+        $data = [
             'name' => $request->name,
             'contant' => $request->contant,
             'description' => $request->description,
             'price' => $request->price,
-            'time' => $request->time, 
-            'image' => $imagePath,
-        ]);
+            'time' => $request->time,
+        ];
+
+        // التحقق من وجود صورة مرفوعة
+        if ($request->hasFile('image')) {
+            // رفع الصورة وتخزينها في مجلد التخزين
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('images'), $imageName);
+            $data['image'] = env('APP_URL') . '/public/images/' . $imageName;
+        }
+
+        $course->update($data);
 
         return response()->json($course);
-
     }
 
     public function destroy($id)
@@ -153,7 +164,7 @@ class CourseController extends Controller
         $course = Course::findOrFail($id);
         $course->delete();
         return response()->json([
-            'succec'=>'بنجاح [ ' .$course->name. ' ] تم حذف كورس ',
+            'succec' => 'بنجاح [ ' . $course->name . ' ] تم حذف كورس ',
         ]);
     }
 }

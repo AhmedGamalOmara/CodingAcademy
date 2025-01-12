@@ -6,19 +6,33 @@ use App\Models\Course;
 use App\Models\Lecturer;
 use App\Models\Teach;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TeachController extends Controller
 {
     // إضافة محاضر لكورس
     public function addLecturerToCourse(Request $request)
     {
-        $request->validate([
-            'course_id' => 'required|exists:courses,id',
+        $massage = [
+            'lecturer_id.required' => 'يجب تحديد المحاضر.',
+            'lecturer_id.exists' => 'المحاضر غير موجود.',
+            'courses_id.required' => 'يجب تحديد الكورس.',
+            'courses_id.exists' => 'الكورس غير موجود.',
+        ];
+        $validator = Validator::make($request->all(),[
+            'courses_id' => 'required|exists:courses,id',
             'lecturer_id' => 'required|exists:lecturer,id',
-        ]);
+        ],$massage);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error'=> $validator->errors()->first(),
+            ], 422);
+        };
+
 
         $teach = Teach::create([
-            'courses_id' => $request->course_id,
+            'courses_id' => $request->courses_id,
             'lecturer_id' => $request->lecturer_id,
         ]);
 
@@ -26,14 +40,31 @@ class TeachController extends Controller
     }
 
     // تحديث محاضر الكورس
-    public function updateLecturerInCourse(Request $request, $teachId)
+    public function updateLecturerOrCourse(Request $request, $teachId)
     {
-        $request->validate([
+        $massage = [
+            'lecturer_id.required' => 'يجب تحديد المحاضر.',
+            'lecturer_id.exists' => 'المحاضر غير موجود.',
+            'courses_id.required' => 'يجب تحديد الكورس.',
+            'courses_id.exists' => 'الكورس غير موجود.',
+        ];
+
+        $validator = Validator::make($request->all(),[
+            'courses_id' => 'required|exists:courses,id',
             'lecturer_id' => 'required|exists:lecturer,id',
-        ]);
+        ], $massage);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error'=> $validator->errors()->first(),
+            ], 422);
+        };
 
         $teach = Teach::findOrFail($teachId);
-        $teach->update(['lecturer_id' => $request->lecturer_id]);
+        $teach->update([
+            'lecturer_id' => $request->lecturer_id,
+            'courses_id' => $request->courses_id,
+        ]);
 
         return response()->json(['message' => 'Lecturer updated successfully!', 'data' => $teach]);
     }

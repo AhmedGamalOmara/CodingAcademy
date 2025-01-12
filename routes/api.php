@@ -31,14 +31,13 @@ Route::post('/login', [AuthController::class,'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class,'logout']);
 
 
-Route::group(['prefix'=> 'user','middleware'=>'auth:sanctum'], function () {
-    Route::get('/', [UserController::class,'index']);
-    Route::post('/store', [UserController::class,'store']);
-    Route::get('/{id}', [Usercontroller::class,'edit']);
-    Route::post('/{id}', [Usercontroller::class,'update']);
-    Route::delete('/{id}', [Usercontroller::class,'destroy']); 
+Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/', [UserController::class, 'index']);
+    Route::post('/', [UserController::class, 'store']);
+    Route::get('edit/{id}', [UserController::class, 'show']);
+    Route::patch('edit/{id}', [UserController::class, 'update']);
+    Route::delete('/{id}', [UserController::class, 'destroy']);
 });
-
 
 Route::group(['prefix'=> 'get','middleware'=>'auth:sanctum'], function () {
     Route::post('/subscribe', [GetController::class, 'subscribe']); // الاشتراك في كورس
@@ -56,17 +55,17 @@ Route::group(['prefix'=> 'course','middleware'=>'auth:sanctum'], function () {
 });
 
 Route::group(['prefix'=> 'teach','middleware'=>'auth:sanctum'], function () {
-    Route::post('/teach/add', [TeachController::class, 'addLecturerToCourse']);
-    Route::put('/teach/update/{id}', [TeachController::class, 'updateLecturerInCourse']);
-    Route::get('/teach/course/{id}', [TeachController::class, 'getLecturersForCourse']);
-    Route::delete('/teach/remove/{id}', [TeachController::class, 'removeLecturerFromCourse']);
+    Route::post('/add', [TeachController::class, 'addLecturerToCourse']);
+    Route::put('/update/{id}', [TeachController::class, 'updateLecturerOrCourse']);
+    Route::get('/course/{id}', [TeachController::class, 'getLecturersForCourse']);
+    Route::delete('/remove/{id}', [TeachController::class, 'removeLecturerFromCourse']);
     Route::delete('/course/delete/{id}', [TeachController::class, 'deleteCourse']);
 });
 
 Route::group(['prefix'=> 'lecturer'], function () {
     Route::get('/', [LecturerController::class,'index']);
     Route::post('/store', [LecturerController::class,'store']);
-    Route::get('/{id}', [LecturerController::class,'edit']);
-    Route::post('/{id}', [LecturerController::class,'update']);
+    Route::get('edit/{id}', [LecturerController::class,'show']);
+    Route::patch('edit/{id}', [LecturerController::class,'update']);
     Route::delete('/{id}', [LecturerController::class,'destroy']); 
 });
