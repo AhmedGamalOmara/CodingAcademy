@@ -108,8 +108,14 @@ class CourseController extends Controller
 
     public function edit($id)
     {
-        $course = Course::find($id);
-        return response()->json($course);
+        $course = Course::findOrFail($id);
+        $lecturer = Teach::where('courses_id', $id)->first();
+
+        return response()->json([
+        'course' => $course,
+        'lecturer_id' => $lecturer ? $lecturer->lecturer_id : null, // إذا لم يكن هناك محاضر، إرجاع null
+    ]);
+        // return response()->json($course);
     }
 
     public function update(Request $request, $id)
