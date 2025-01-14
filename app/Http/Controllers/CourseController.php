@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\models\Course;
+use App\models\Teach;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -52,6 +53,8 @@ class CourseController extends Controller
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
+            'lecturer_id.required' => 'المحاضر مطلوب.',
+            'lecturer_id.exists' => 'المحاضر المحدد غير موجود.',
         ];
 
         $validator = Validator::make($request->all(), [
@@ -62,6 +65,7 @@ class CourseController extends Controller
             'time' => 'required|integer|min:1|max:6',
             'user_add_id' => 'nullable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'lecturer_id' => 'required|exists:lecturer,id',
         ], $messages);
 
         if ($validator->fails()) {
@@ -92,6 +96,13 @@ class CourseController extends Controller
             'image' => $imagePath,
         ]);
 
+        // $course->lecturers()->attach($request->lecturer_id);
+
+        Teach::create([
+            'courses_id' => $course->id,
+            'lecturer_id' => $request->lecturer_id,
+        ]);
+
         return response()->json($course);
     }
 
@@ -119,6 +130,8 @@ class CourseController extends Controller
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
+            'lecturer_id.required' => 'المحاضر مطلوب.',
+            'lecturer_id.exists' => 'المحاضر غير موجود.',
         ];
 
         $validator = Validator::make($request->all(), [
@@ -128,6 +141,8 @@ class CourseController extends Controller
             'price' => 'required|numeric',
             'time' => 'required|integer|min:1|max:6',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'user_add_id' => 'nullable',
+            'lecturer_id' => 'required|exists:lecturer,id',
         ], $messages);
 
         if ($validator->fails()) {
@@ -144,6 +159,7 @@ class CourseController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'time' => $request->time,
+            'user_add_id' => $request->user_add_id,
         ];
 
         // التحقق من وجود صورة مرفوعة
@@ -154,6 +170,18 @@ class CourseController extends Controller
             $data['image'] = env('APP_URL') . '/public/images/' . $imageName;
         }
 
+        
+        if ($request->filled('lecturer_id')) {
+            $teach = Teach::where('courses_id', $course->id)->first();
+            if ($teach) {
+                $teach->update(['lecturer_id' => $request->lecturer_id]);
+            } else {
+                Teach::create([
+                    'courses_id' => $course->id,
+                    'lecturer_id' => $request->lecturer_id,
+                ]);
+            }
+        }
         $course->update($data);
 
         return response()->json($course);

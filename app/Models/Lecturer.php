@@ -21,9 +21,9 @@ class Lecturer extends Model
     ];
 
 
-    public function teach()
-    {
-        return $this->hasMany(Teach::class, 'lecturer_id');
-    }
+  public function courses()
+{
+    return $this->belongsToMany(Course::class, 'teach', 'lecturer_id', 'courses_id');
+}
 
 }

@@ -73,7 +73,7 @@ class TeachController extends Controller
     public function getLecturersForCourse($courseId)
     {
         $course = Course::findOrFail($courseId);
-        $lecturers = $course->teach()->with('lecturer')->get();
+        $lecturers = $course->lecturers()->with('lecturer')->get();
 
         return response()->json(['course' => $course->name, 'lecturers' => $lecturers]);
     }

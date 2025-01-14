@@ -18,6 +18,7 @@ class Course extends Model
         'Reservations',
         'user_add_id',
         'image',
+        'lecturer_id'
     ];
 
     public function subscribers()
@@ -25,10 +26,9 @@ class Course extends Model
         return $this->hasMany(Get::class, 'courses_id');
     }
 
-    public function teach()
-{
-    return $this->hasMany(Teach::class, 'courses_id');
-}
-
+    public function lecturers()
+    {
+        return $this->belongsToMany(Lecturer::class, 'teach', 'courses_id', 'lecturer_id');
+    }
 
 }

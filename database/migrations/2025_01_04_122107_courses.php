@@ -23,6 +23,7 @@ return new class extends Migration
         $table->unsignedBigInteger('user_add_id')->nullable();
         $table->unsignedBigInteger('teach_id')->nullable();
         $table->unsignedBigInteger('get_id')->nullable();
+        // $table->unsignedBigInteger('lecturer_id')->nullable();
         $table->timestamps();
     });
     Schema::table('courses', function (Blueprint $table) {
