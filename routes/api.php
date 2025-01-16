@@ -6,6 +6,9 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\GetController;
 use App\Http\Controllers\TeachController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\QuestionController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -69,3 +72,30 @@ Route::group(['prefix'=> 'lecturer'], function () {
     Route::patch('edit/{id}', [LecturerController::class,'update']);
     Route::delete('/{id}', [LecturerController::class,'destroy']); 
 });
+
+Route::group(['prefix'=> 'team'], function () {
+    Route::get('/', [TeamController::class,'index']);
+    Route::post('/', [TeamController::class,'store']);
+    Route::get('/edit/{id}', [TeamController::class,'show']);
+    Route::patch('/edit/{id}', [TeamController::class,'update']);
+    Route::delete('/{id}', [TeamController::class,'destroy']); 
+});
+
+Route::group(['prefix'=> 'image'], function () {
+    Route::get('/', [ImageController::class, 'index']); 
+    Route::post('/', [ImageController::class, 'store']); 
+    Route::get('/edit/{id}', [ImageController::class,'show']);
+    Route::patch('edit/{id}', [ImageController::class, 'update']); 
+    Route::delete('/{id}', [ImageController::class, 'destroy']); 
+});
+
+Route::group(['prefix'=> 'question'], function () {
+    Route::get('/', [QuestionController::class, 'index']); 
+    Route::post('/', [QuestionController::class, 'store']); 
+    Route::get('/edit/{id}', [QuestionController::class,'show']);
+    Route::patch('edit/{id}', [QuestionController::class, 'update']); 
+    Route::delete('/{id}', [QuestionController::class, 'destroy']); 
+});
+
+
+
