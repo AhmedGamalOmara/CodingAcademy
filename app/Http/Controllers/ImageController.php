@@ -17,14 +17,15 @@ class ImageController extends Controller
     public function store(Request $request)
     {
         $message = [
-            'images.*.required' => 'الصورة مطلوبة.',
-            'images.*.image' => 'الملف يجب أن يكون صورة.',
-            'images.*.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
-            'images.*.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
+            'image.required' => 'الصورة مطلوبة.',
+            'image.image' => 'الملف يجب أن يكون صورة.',
+            'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
+            'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
         ];
         
         $validator = Validator::make($request->all(), [
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', 
+            'image' => 'required',
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ],  $message);
 
         if ($validator->fails()) {
@@ -34,14 +35,16 @@ class ImageController extends Controller
         };
 
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $imageFile) {
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $imageFile) {
                 $imageName = time() . '_' . $imageFile->getClientOriginalName();
                 $imageFile->move(public_path('images'), $imageName);
                 $imagePath = env('APP_URL') . '/public/images/' . $imageName;
 
 
-                Image::create(['image' => $imagePath]);
+                Image::create([
+                    'image' => $imagePath,
+                ]);
             }
         }
 
@@ -56,14 +59,14 @@ class ImageController extends Controller
     public function update(Request $request, $id)
 {
     $message = [
-        'images.*.required' => 'الصورة مطلوبة.',
-        'images.*.image' => 'الملف يجب أن يكون صورة.',
-        'images.*.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
-        'images.*.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
+        'image.required' => 'الصورة مطلوبة.',
+        'image.image' => 'الملف يجب أن يكون صورة.',
+        'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
+        'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
     ];
 
     $validator = Validator::make($request->all(), [
-        'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', 
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', 
     ],  $message);
 
     if ($validator->fails()) {
