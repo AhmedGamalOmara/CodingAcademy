@@ -66,7 +66,7 @@ Route::group(['prefix'=> 'teach','middleware'=>'auth:sanctum'], function () {
     Route::delete('/course/delete/{id}', [TeachController::class, 'deleteCourse']);
 });
 
-Route::group(['prefix'=> 'lecturer'], function () {
+Route::group(['prefix'=> 'lecturer','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [LecturerController::class,'index']);
     Route::post('/', [LecturerController::class,'store']);
     Route::get('edit/{id}', [LecturerController::class,'show']);
@@ -74,7 +74,7 @@ Route::group(['prefix'=> 'lecturer'], function () {
     Route::delete('/{id}', [LecturerController::class,'destroy']); 
 });
 
-Route::group(['prefix'=> 'team'], function () {
+Route::group(['prefix'=> 'team','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [TeamController::class,'index']);
     Route::post('/', [TeamController::class,'store']);
     Route::get('/edit/{id}', [TeamController::class,'show']);
@@ -82,7 +82,7 @@ Route::group(['prefix'=> 'team'], function () {
     Route::delete('/{id}', [TeamController::class,'destroy']); 
 });
 
-Route::group(['prefix'=> 'image'], function () {
+Route::group(['prefix'=> 'image','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [ImageController::class, 'index']); 
     Route::post('/', [ImageController::class, 'store']); 
     Route::get('/edit/{id}', [ImageController::class,'show']);
@@ -90,7 +90,7 @@ Route::group(['prefix'=> 'image'], function () {
     Route::delete('/{id}', [ImageController::class, 'destroy']); 
 });
 
-Route::group(['prefix'=> 'question'], function () {
+Route::group(['prefix'=> 'question','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [QuestionController::class, 'index']); 
     Route::post('/', [QuestionController::class, 'store']); 
     Route::get('/edit/{id}', [QuestionController::class,'show']);

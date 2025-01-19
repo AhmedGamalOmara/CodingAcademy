@@ -18,19 +18,16 @@ class UserController extends Controller
     // }
     // public function index()
     {
-        // قراءة عدد العناصر في الصفحة من الطلب مع قيمة افتراضية
-        $perPage = $request->get('per_page', 10); // عدد العناصر الافتراضي 10
-        $page = $request->get('page', 1); // الصفحة الافتراضية هي 1
+
+        $perPage = $request->get('per_page', 10);
+        $page = $request->get('page', 1); 
     
-        // جلب البيانات مع تحديد الإزاحة وعدد العناصر
         $query = User::query();
-        $total = $query->count(); // العدد الإجمالي للعناصر
-        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+        $total = $query->count(); 
+        $data = $query->select('name')->skip(($page - 1) * $perPage)->take($perPage)->get();
     
-        // حساب العدد الإجمالي للصفحات
         $totalPages = ceil($total / $perPage);
     
-        // بناء الاستجابة
         return response()->json([
             'data' => $data,
             'current_page' => $page,

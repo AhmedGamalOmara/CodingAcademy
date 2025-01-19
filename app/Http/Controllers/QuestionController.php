@@ -9,10 +9,29 @@ use App\models\Question;
 class QuestionController extends Controller
 {
     public function index(Request $request)
+    // {
+    //     $question  = Question::all();
+    //     return response()->json([
+    //         "question : "=> $question,
+    //     ]);
+    // }
     {
-        $question  = Question::all();
+
+        $perPage = $request->get('per_page', 10);
+        $page = $request->get('page', 1); 
+    
+        $query = Question::query();
+        $total = $query->count(); 
+        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+    
+        $totalPages = ceil($total / $perPage);
+    
         return response()->json([
-            "question : "=> $question,
+            'data' => $data,
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total' => $total,
+            'total_pages' => $totalPages,
         ]);
     }
 

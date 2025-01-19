@@ -8,10 +8,29 @@ use Illuminate\Support\Facades\Validator;
 
 class ImageController extends Controller
 {
-    public function index()
-{
-    $images = Image::all();
-    return response()->json($images, 200);
+    public function index(Request $request)
+    // {
+    // $images = Image::all();
+    // return response()->json($images, 200);
+    // }
+    {
+
+        $perPage = $request->get('per_page', 10);
+        $page = $request->get('page', 1); 
+    
+        $query = Image::query();
+        $total = $query->count(); 
+        $data = $query->select('name','id')->skip(($page - 1) * $perPage)->take($perPage)->get();
+    
+        $totalPages = ceil($total / $perPage);
+    
+        return response()->json([
+            'data' => $data,
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total' => $total,
+            'total_pages' => $totalPages,
+        ]);
     }
 
     public function store(Request $request)
@@ -24,6 +43,7 @@ class ImageController extends Controller
         ];
         
         $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
             'image' => 'required',
             'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'user_add_id' => 'nullable',
@@ -44,6 +64,7 @@ class ImageController extends Controller
 
 
                 Image::create([
+                    'name' => $request->name,
                     'image' => $imagePath,
                     'user_add_id' => $request->user_add_id,
                 ]);
