@@ -20,9 +20,10 @@ class TeamController extends Controller
         $perPage = $request->get('per_page', 10);
         $page = $request->get('page', 1); 
     
-        $query = Team::query();
+        // $query = Team::query();
+        $query = Team::with('user:id,name');
         $total = $query->count(); 
-        $data = $query->select('name')->skip(($page - 1) * $perPage)->take($perPage)->get();
+        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
     
         $totalPages = ceil($total / $perPage);
     
@@ -70,7 +71,7 @@ class TeamController extends Controller
             $request->file('image')->move(public_path('images'), $imageName);
             $imagePath = env('APP_URL') . '/public/images/' . $imageName;
         } else {
-            $imagePath = url('public/images/def.png'); 
+            $imagePath = url('coding_academy/public/images/def.png'); 
         }
 
         $team = Team::create([

@@ -22,7 +22,8 @@ class UserController extends Controller
         $perPage = $request->get('per_page', 10);
         $page = $request->get('page', 1); 
     
-        $query = User::query();
+        // $query = User::query();
+        $query = User::with('user:id,name');
         $total = $query->count(); 
         $data = $query->select('name')->skip(($page - 1) * $perPage)->take($perPage)->get();
     
@@ -78,7 +79,7 @@ class UserController extends Controller
         };
 
 
-        $imagePath = url('public/images/def.png'); // رابط الصورة الافتراضية بالكامل
+        $imagePath = url('coding_academy/public/images/def.png'); // رابط الصورة الافتراضية بالكامل
 
         // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {

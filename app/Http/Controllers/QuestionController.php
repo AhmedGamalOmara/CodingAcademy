@@ -20,7 +20,8 @@ class QuestionController extends Controller
         $perPage = $request->get('per_page', 10);
         $page = $request->get('page', 1); 
     
-        $query = Question::query();
+        // $query = Question::query();
+        $query = Question::with('user:id,name');
         $total = $query->count(); 
         $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
     

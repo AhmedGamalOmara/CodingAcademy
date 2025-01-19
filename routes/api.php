@@ -38,21 +38,21 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/', [UserController::class, 'index']);
     Route::post('/', [UserController::class, 'store']);
     Route::get('edit/{id}', [UserController::class, 'show']);
-    Route::patch('edit/{id}', [UserController::class, 'update']);
+    Route::post('edit/{id}', [UserController::class, 'update']);
     Route::delete('/{id}', [UserController::class, 'destroy']);
 });
 
 Route::group(['prefix'=> 'get','middleware'=>'auth:sanctum'], function () {
-    Route::post('/subscribe', [GetController::class, 'subscribe']); // الاشتراك في كورس
-    Route::post('/unsubscribe', [GetController::class, 'unsubscribe']); // إلغاء الاشتراك
-    Route::get('/user-courses/{user_id}', [GetController::class, 'getUserCourses']); // عرض الكورسات
-    Route::get('/course-users/{courses_id}', [GetController::class, 'getCourseUsers']); // عرض المسخدمين
+    Route::post('/subscribe', [GetController::class, 'subscribe']); 
+    Route::post('/unsubscribe', [GetController::class, 'unsubscribe']); 
+    Route::get('/user-courses/{user_id}', [GetController::class, 'getUserCourses']);
+    Route::get('/course-users/{courses_id}', [GetController::class, 'getCourseUsers']); 
 });
 
 Route::group(['prefix'=> 'course','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [CourseController::class,'index']);
     Route::post('/', [CourseController::class,'store']);
-    Route::patch('edit/{id}', [CourseController::class,'update']);
+    Route::post('edit/{id}', [CourseController::class,'update']);
     Route::delete('/{id}', [CourseController::class,'destroy']); 
 });
 Route::get('/course/edit/{id}', [CourseController::class,'show']);
@@ -60,7 +60,7 @@ Route::get('/course/edit/{id}', [CourseController::class,'show']);
 
 Route::group(['prefix'=> 'teach','middleware'=>'auth:sanctum'], function () {
     Route::post('/add', [TeachController::class, 'addLecturerToCourse']);
-    Route::put('/update/{id}', [TeachController::class, 'updateLecturerOrCourse']);
+    Route::post('/update/{id}', [TeachController::class, 'updateLecturerOrCourse']);
     Route::get('/course/{id}', [TeachController::class, 'getLecturersForCourse']);
     Route::delete('/remove/{id}', [TeachController::class, 'removeLecturerFromCourse']);
     Route::delete('/course/delete/{id}', [TeachController::class, 'deleteCourse']);
@@ -70,33 +70,35 @@ Route::group(['prefix'=> 'lecturer','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [LecturerController::class,'index']);
     Route::post('/', [LecturerController::class,'store']);
     Route::get('edit/{id}', [LecturerController::class,'show']);
-    Route::patch('edit/{id}', [LecturerController::class,'update']);
+    Route::post('edit/{id}', [LecturerController::class,'update']);
     Route::delete('/{id}', [LecturerController::class,'destroy']); 
 });
 
 Route::group(['prefix'=> 'team','middleware'=>'auth:sanctum'], function () {
-    Route::get('/', [TeamController::class,'index']);
     Route::post('/', [TeamController::class,'store']);
     Route::get('/edit/{id}', [TeamController::class,'show']);
-    Route::patch('/edit/{id}', [TeamController::class,'update']);
+    Route::post('/edit/{id}', [TeamController::class,'update']);
     Route::delete('/{id}', [TeamController::class,'destroy']); 
 });
+Route::get('team/', [TeamController::class,'index']);
+
 
 Route::group(['prefix'=> 'image','middleware'=>'auth:sanctum'], function () {
-    Route::get('/', [ImageController::class, 'index']); 
     Route::post('/', [ImageController::class, 'store']); 
     Route::get('/edit/{id}', [ImageController::class,'show']);
-    Route::patch('edit/{id}', [ImageController::class, 'update']); 
+    Route::post('edit/{id}', [ImageController::class, 'update']); 
     Route::delete('/{id}', [ImageController::class, 'destroy']); 
 });
+Route::get('image/', [ImageController::class, 'index']); 
+
 
 Route::group(['prefix'=> 'question','middleware'=>'auth:sanctum'], function () {
-    Route::get('/', [QuestionController::class, 'index']); 
     Route::post('/', [QuestionController::class, 'store']); 
     Route::get('/edit/{id}', [QuestionController::class,'show']);
-    Route::patch('edit/{id}', [QuestionController::class, 'update']); 
+    Route::post('edit/{id}', [QuestionController::class, 'update']); 
     Route::delete('/{id}', [QuestionController::class, 'destroy']); 
 });
+Route::get('question/', [QuestionController::class, 'index']); 
 
 
 

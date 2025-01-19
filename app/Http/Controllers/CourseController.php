@@ -13,19 +13,17 @@ class CourseController extends Controller
 {
     public function index(Request $request)
     {
-        // قراءة عدد العناصر في الصفحة من الطلب مع قيمة افتراضية
-        $perPage = $request->get('per_page', 10); // عدد العناصر الافتراضي 10
-        $page = $request->get('page', 1); // الصفحة الافتراضية هي 1
 
-        // جلب البيانات مع تحديد الإزاحة وعدد العناصر
-        $query = Course::query();
-        $total = $query->count(); // العدد الإجمالي للعناصر
+        $perPage = $request->get('per_page', 10);
+        $page = $request->get('page', 1); 
+
+        // $query = Course::query();
+        $query = Course::with('user:id,name');
+        $total = $query->count(); 
         $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
 
-        // حساب العدد الإجمالي للصفحات
         $totalPages = ceil($total / $perPage);
 
-        // بناء الاستجابة
         return response()->json([
             'data' => $data,
             'current_page' => $page,
@@ -82,7 +80,7 @@ class CourseController extends Controller
             $request->file('image')->move(public_path('images'), $imageName);
             $imagePath = env('APP_URL') . '/public/images/' . $imageName;
         } else {
-            $imagePath = url('public/images/def.png'); // رابط الصورة الافتراضية بالكامل 
+            $imagePath = url('coding_academy/public/images/def.png'); // رابط الصورة الافتراضية بالكامل 
         }
 
 
