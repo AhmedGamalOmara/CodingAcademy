@@ -26,6 +26,7 @@ class ImageController extends Controller
         $validator = Validator::make($request->all(), [
             'image' => 'required',
             'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'user_add_id' => 'nullable',
         ],  $message);
 
         if ($validator->fails()) {
@@ -44,6 +45,7 @@ class ImageController extends Controller
 
                 Image::create([
                     'image' => $imagePath,
+                    'user_add_id' => $request->user_add_id,
                 ]);
             }
         }

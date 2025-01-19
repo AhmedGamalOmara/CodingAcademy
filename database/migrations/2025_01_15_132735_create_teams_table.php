@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('facebook')->nullable(); 
             $table->string('instagram')->nullable(); 
             $table->string('twitter')->nullable(); 
-            $table->string('linkedin')->nullable(); 
+            $table->string('linkedin')->nullable();
+            $table->unsignedBigInteger('user_add_id')->nullable(); 
             $table->timestamps();
         });
     }

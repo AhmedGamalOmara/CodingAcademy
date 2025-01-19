@@ -11,5 +11,6 @@ class Image extends Model
 
     protected $fillable = [
         'image',
+        'user_add_id',
     ];
 }

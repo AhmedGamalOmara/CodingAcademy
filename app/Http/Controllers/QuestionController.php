@@ -28,6 +28,7 @@ class QuestionController extends Controller
         $validator = Validator::make($request->all(), [
             'question' => 'required|string',
             'answer' => 'required|string',
+            'user_add_id' => 'nullable',
         ], messages: $messages);
 
         if ($validator->fails()) {
@@ -39,6 +40,7 @@ class QuestionController extends Controller
         $question = Question::create([
             'question' => $request->question,
             'answer' => $request->answer,
+            'user_add_id' => $request->user_add_id,
         ]);
 
         return response()->json($question, 200);

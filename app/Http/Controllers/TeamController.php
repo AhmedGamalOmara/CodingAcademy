@@ -37,6 +37,7 @@ class TeamController extends Controller
             'instagram' => 'nullable',
             'twitter' => 'nullable',
             'linkedin' => 'nullable',
+            'user_add_id' => 'nullable',
         ], messages: $messages);
 
         if ($validator->fails()) {
@@ -61,6 +62,7 @@ class TeamController extends Controller
             'instagram' => $request->instagram,
             'twitter' => $request->twitter,
             'linkedin' => $request->linkedin,
+            'user_add_id' => $request->user_add_id,
         ]);
 
         return response()->json($team, 200);

@@ -52,10 +52,11 @@ Route::group(['prefix'=> 'get','middleware'=>'auth:sanctum'], function () {
 Route::group(['prefix'=> 'course','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [CourseController::class,'index']);
     Route::post('/', [CourseController::class,'store']);
-    Route::get('edit/{id}', [CourseController::class,'show']);
     Route::patch('edit/{id}', [CourseController::class,'update']);
     Route::delete('/{id}', [CourseController::class,'destroy']); 
 });
+Route::get('/course/edit/{id}', [CourseController::class,'show']);
+
 
 Route::group(['prefix'=> 'teach','middleware'=>'auth:sanctum'], function () {
     Route::post('/add', [TeachController::class, 'addLecturerToCourse']);
