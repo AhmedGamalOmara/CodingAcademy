@@ -134,7 +134,6 @@ class TeamController extends Controller
             'linkedin' => $request->linkedin,
         ];
 
-        // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {
             $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
             $request->file('image')->move(public_path('images'), $imageName);

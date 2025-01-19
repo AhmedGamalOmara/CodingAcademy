@@ -16,14 +16,14 @@ class ImageController extends Controller
     {
 
         $perPage = $request->get('per_page', 10);
-        $page = $request->get('page', 1); 
-    
+        $page = $request->get('page', 1);
+
         $query = Image::query();
-        $total = $query->count(); 
-        $data = $query->select('name','id')->skip(($page - 1) * $perPage)->take($perPage)->get();
-    
+        $total = $query->count();
+        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+
         $totalPages = ceil($total / $perPage);
-    
+
         return response()->json([
             'data' => $data,
             'current_page' => $page,
@@ -36,12 +36,15 @@ class ImageController extends Controller
     public function store(Request $request)
     {
         $message = [
+            'name.required' => 'الاسم مطلوب.',
+            'name.string' => 'يجب أن يكون الاسم نصًا.',
+            'name.max' => 'يجب ألا يزيد الاسم عن 255 حرفًا.',
             'image.required' => 'الصورة مطلوبة.',
             'image.image' => 'الملف يجب أن يكون صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
         ];
-        
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'image' => 'required',
@@ -74,63 +77,70 @@ class ImageController extends Controller
         return response()->json(['message' => 'تم رفع الصور بنجاح'], 200);
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $image = Image::find($id);
         return response()->json($image);
     }
 
     public function update(Request $request, $id)
-{
-    $message = [
-        'image.required' => 'الصورة مطلوبة.',
-        'image.image' => 'الملف يجب أن يكون صورة.',
-        'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
-        'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
-    ];
+    {
+        $message = [
+            'name.required' => 'الاسم مطلوب.',
+            'name.string' => 'يجب أن يكون الاسم نصًا.',
+            'name.max' => 'يجب ألا يزيد الاسم عن 255 حرفًا.',
+            'image.image' => 'الملف يجب أن يكون صورة.',
+            'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
+            'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
+        ];
 
-    $validator = Validator::make($request->all(), [
-        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', 
-    ],  $message);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ],  $message);
 
-    if ($validator->fails()) {
-        return response()->json([
-            'error' => $validator->errors()->first(),
-        ], 422);
-    };
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->first(),
+            ], 422);
+        };
 
-    $image = Image::find($id);
+        $image = Image::findOrFail($id);
 
-    if (!$image) {
-        return response()->json(['error' => 'الصورة غير موجودة'], 404);
-    }
+        $data = [
+            'name' => $request->name,
+        ];
 
-    $oldImagePath = public_path(str_replace(env('APP_URL') . '/public/', '', $image->image));
-    if (file_exists($oldImagePath)) {
-        unlink($oldImagePath);
-    }
+        if ($request->hasFile('image')) {
 
-    $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
-    $request->file('image')->move(public_path('images'), $imageName);
-    $imagePath = env('APP_URL') . '/public/images/' . $imageName;
+            $oldImagePath = public_path(str_replace(env('APP_URL') . '/public/', '', $image->image));
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath);
+            }
 
-    $image->update(['image' => $imagePath]);
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('images'), $imageName);
+            $data['image'] = env('APP_URL') . '/public/images/' . $imageName;
+        }
 
-    return response()->json(['message' => 'تم تحديث الصورة بنجاح', 'image' => $image], 200);
+        $image->update($data);
+
+        return response()->json(['message' => 'تم تحديث الصورة بنجاح', 'image' => $image], 200);
     }
 
     public function destroy($id)
-{
-    $image = Image::find($id);
-    if (!$image) {
-        return response()->json(['error' => 'الصورة غير موجودة'], 404);
-    }
+    {
+        $image = Image::find($id);
+        if (!$image) {
+            return response()->json(['error' => 'الصورة غير موجودة'], 404);
+        }
 
-    $imagePath = public_path(str_replace(env('APP_URL') . '/public/', '', $image->image));
-    if (file_exists($imagePath)) {
-        unlink($imagePath);
-    }
+        $imagePath = public_path(str_replace(env('APP_URL') . '/public/', '', $image->image));
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
 
-    $image->delete();
-    return response()->json(['message' => 'تم حذف الصورة بنجاح'], 200);
+        $image->delete();
+        return response()->json(['message' => 'تم حذف الصورة بنجاح'], 200);
     }
 }
