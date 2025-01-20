@@ -25,7 +25,7 @@ class UserController extends Controller
         // $query = User::query();
         $query = User::with('user:id,name');
         $total = $query->count(); 
-        $data = $query->select('name')->skip(($page - 1) * $perPage)->take($perPage)->get();
+        $data = $query->select('name','user_add_id')->skip(($page - 1) * $perPage)->take($perPage)->get();
     
         $totalPages = ceil($total / $perPage);
     
