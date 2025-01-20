@@ -9,32 +9,31 @@ use App\models\Team;
 class TeamController extends Controller
 {
     public function index(Request $request)
-    // {
-    //     $team  = Team::all();
-    //     return response()->json([
-    //         "team : "=> $team,
-    //     ]);
-    // }
     {
-
-        $perPage = $request->get('per_page', 10);
-        $page = $request->get('page', 1); 
-    
-        // $query = Team::query();
-        $query = Team::with('user:id,name');
-        $total = $query->count(); 
-        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
-    
-        $totalPages = ceil($total / $perPage);
-    
+        $team = Team::with('user:id,name')->get();
         return response()->json([
-            'data' => $data,
-            'current_page' => $page,
-            'per_page' => $perPage,
-            'total' => $total,
-            'total_pages' => $totalPages,
+            "team" => $team,
         ]);
     }
+
+    //     $perPage = $request->get('per_page', 10);
+    //     $page = $request->get('page', 1); 
+    
+    //     // $query = Team::query();
+    //     $query = Team::with('user:id,name');
+    //     $total = $query->count(); 
+    //     $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+    
+    //     $totalPages = ceil($total / $perPage);
+    
+    //     return response()->json([
+    //         'data' => $data,
+    //         'current_page' => $page,
+    //         'per_page' => $perPage,
+    //         'total' => $total,
+    //         'total_pages' => $totalPages,
+    //     ]);
+    // }
 
     public function store(Request $request)
     {
