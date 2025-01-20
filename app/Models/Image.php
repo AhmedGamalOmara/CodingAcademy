@@ -14,4 +14,9 @@ class Image extends Model
         'image',
         'user_add_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_add_id');
+    }
 }
