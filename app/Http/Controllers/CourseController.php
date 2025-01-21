@@ -13,17 +13,27 @@ class CourseController extends Controller
 {
     public function index(Request $request)
     {
-
         $perPage = $request->get('per_page', 10);
-        $page = $request->get('page', 1); 
+        $page = $request->get('page', 1);
+        $search = $request->get('search', ''); 
+    
+        $query = Course::with([
+            'user:id,name',
+            'lecturers:id,name'
+        ]);
 
-        // $query = Course::query();
-        $query = Course::with('user:id,name');
-        $total = $query->count(); 
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('id', $search);
+            });
+        }
+    
+        $total = $query->count();
         $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
-
+    
         $totalPages = ceil($total / $perPage);
-
+    
         return response()->json([
             'data' => $data,
             'current_page' => $page,

@@ -18,9 +18,18 @@ class LecturerController extends Controller
 
         $perPage = $request->get('per_page', 10); 
         $page = $request->get('page', 1); 
-
+        $search = $request->get('search', ''); 
+        
         // $query = Lecturer::query();
         $query = Lecturer::with('user:id,name');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('id', $search);
+            });
+        }
+        
         $total = $query->count();
         $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
 

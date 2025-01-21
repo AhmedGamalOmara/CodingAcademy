@@ -30,6 +30,15 @@ class TeachController extends Controller
             ], 422);
         };
 
+        $exists = Teach::where('courses_id', $request->courses_id)
+        ->where('lecturer_id', $request->lecturer_id)
+        ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'error' => 'هذا المحاضر مرتبط بالفعل بهذا الكورس.',
+            ], 422);
+        }
 
         $teach = Teach::create([
             'courses_id' => $request->courses_id,
@@ -60,6 +69,16 @@ class TeachController extends Controller
             ], 422);
         };
 
+        $exists = Teach::where('courses_id', $request->courses_id)
+        ->where('lecturer_id', $request->lecturer_id)
+        ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'error' => 'هذا المحاضر مرتبط بالفعل بهذا الكورس.',
+            ], 422);
+        }
+
         $teach = Teach::findOrFail($teachId);
         $teach->update([
             'lecturer_id' => $request->lecturer_id,
@@ -72,10 +91,10 @@ class TeachController extends Controller
     // عرض المحاضرين لكورس معين
     public function getLecturersForCourse($courseId)
     {
-        $course = Course::findOrFail($courseId);
-        $lecturers = $course->lecturers()->with('lecturer')->get();
+        $course = Course::findOrFail( $courseId);
+        $lecturers = $course->lecturers()->get();
 
-        return response()->json(['course' => $course->name, 'lecturers' => $lecturers]);
+        return response()->json(['course' => $course->name, 'lecturer' => $lecturers]);
     }
 
     // حذف محاضر من الكورس

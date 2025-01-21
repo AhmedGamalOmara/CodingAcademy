@@ -20,10 +20,21 @@ class UserController extends Controller
     {
 
         $perPage = $request->get('per_page', 10);
-        $page = $request->get('page', 1); 
-    
+        $page = $request->get('page', 1);
+        $search = $request->get('search', '');
+        
+        
         // $query = User::query();
         $query = User::with('user:id,name');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('id', $search)
+                  ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        }
+
         $total = $query->count(); 
         $data = $query->select('name','user_add_id')->skip(($page - 1) * $perPage)->take($perPage)->get();
     

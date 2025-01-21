@@ -10,7 +10,18 @@ class TeamController extends Controller
 {
     public function index(Request $request)
     {
+
+        $search = $request->get('search', '');
+        
         $team = Team::with('user:id,name')->get();
+
+        if (!empty($search)) {
+            $team->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('id', $search);
+            });
+        }
+        
         return response()->json([
             "team" => $team,
         ]);

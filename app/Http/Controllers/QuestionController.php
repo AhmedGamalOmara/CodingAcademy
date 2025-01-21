@@ -19,9 +19,18 @@ class QuestionController extends Controller
 
         $perPage = $request->get('per_page', 10);
         $page = $request->get('page', 1); 
-    
+        $search = $request->get('search', ''); 
+        
         // $query = Question::query();
         $query = Question::with('user:id,name');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('question', 'like', '%' . $search . '%')
+                  ->orWhere('id', $search);
+            });
+        }
+
         $total = $query->count(); 
         $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
     
@@ -105,7 +114,7 @@ class QuestionController extends Controller
         $question = Question::findOrFail($id);
         $question->delete();
         return response()->json([
-            'succec' => 'بنجاح [ ' . $question->name . ' ] تم حذف  ',
+            'succec' => 'بنجاح [ ' . $question->question . ' ] تم حذف  ',
         ]);
     }
 }
