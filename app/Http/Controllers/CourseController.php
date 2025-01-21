@@ -144,6 +144,8 @@ class CourseController extends Controller
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
+            'lecturer_id.required' => 'المحاضر مطلوب.',
+            'lecturer_id.exists' => 'المحاضر غير موجود.',
         ];
 
         $validator = Validator::make($request->all(), [
@@ -153,6 +155,7 @@ class CourseController extends Controller
             'price' => 'required|numeric',
             'time' => 'required|integer|min:1|max:6',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'lecturer_id' => 'nullable|exists:lecturer,id',
         ], $messages);
 
         if ($validator->fails()) {
@@ -173,7 +176,6 @@ class CourseController extends Controller
 
         // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {
-            // رفع الصورة وتخزينها في مجلد التخزين
             $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
             $request->file('image')->move(public_path('images'), $imageName);
             $data['image'] = env('APP_URL') . '/public/images/' . $imageName;
@@ -184,11 +186,6 @@ class CourseController extends Controller
             $teach = Teach::where('courses_id', $course->id)->first();
             if ($teach) {
                 $teach->update(['lecturer_id' => $request->lecturer_id]);
-            } else {
-                Teach::create([
-                    'courses_id' => $course->id,
-                    'lecturer_id' => $request->lecturer_id,
-                ]);
             }
         }
         $course->update($data);

@@ -36,7 +36,7 @@ class UserController extends Controller
         }
 
         $total = $query->count(); 
-        $data = $query->select('name','user_add_id')->skip(($page - 1) * $perPage)->take($perPage)->get();
+        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
     
         $totalPages = ceil($total / $perPage);
     
@@ -174,12 +174,17 @@ class UserController extends Controller
             $data['image'] = env('APP_URL') . '/public/images/' . $imageName;
         }
 
-        // إذا كان هناك كلمة مرور جديدة تم إدخالها
+
         $password = $request->input('password');
         if (!empty($password)) {
             $date['password'] = Hash::make($password);
         }
-
+        
+        $reservation = $request->input('reservations');
+        if (!empty($reservation)) {
+            $date['reservation'] = $reservation;
+        }
+        
         $user->update($date);
 
 
