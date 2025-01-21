@@ -144,8 +144,6 @@ class CourseController extends Controller
             'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
             'image.max' => 'يجب ألا يزيد حجم الصورة عن 2 ميجابايت.',
-            'lecturer_id.required' => 'المحاضر مطلوب.',
-            'lecturer_id.exists' => 'المحاضر غير موجود.',
         ];
 
         $validator = Validator::make($request->all(), [
@@ -155,8 +153,6 @@ class CourseController extends Controller
             'price' => 'required|numeric',
             'time' => 'required|integer|min:1|max:6',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'user_add_id' => 'nullable',
-            'lecturer_id' => 'required|exists:lecturer,id',
         ], $messages);
 
         if ($validator->fails()) {
@@ -173,7 +169,6 @@ class CourseController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'time' => $request->time,
-            'user_add_id' => $request->user_add_id,
         ];
 
         // التحقق من وجود صورة مرفوعة
