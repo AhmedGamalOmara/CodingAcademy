@@ -14,7 +14,9 @@ class Get extends Model
 
     protected $fillable = [
         'user_id',
-        'courses_id'
+        'courses_id',
+        'phone',
+        'image'
     ];
 
     public function user()
