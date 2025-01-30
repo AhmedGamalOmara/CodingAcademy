@@ -10,6 +10,40 @@ use Illuminate\Support\Facades\Validator;
 
 class GetController extends Controller
 {
+
+    public function index(Request $request)
+    {
+
+        $perPage = $request->get('per_page', 10);
+        $page = $request->get('page', 1);
+        $search = $request->get('search', '');
+
+
+        $query = Get::with('user:id,name,phone', 'course:id,name')
+            ->join('users', 'users.id', '=', 'get.user_id')
+            ->select('get.*');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('users.name', 'like', '%' . $search . '%')
+                    ->orWhere('users.phone', 'like', '%' . $search . '%')
+                    ->orWhere('get.id', $search);
+            });
+        }
+
+        $total = $query->count();
+        $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+
+        $totalPages = ceil($total / $perPage);
+
+        return response()->json([
+            'data' => $data,
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total' => $total,
+            'total_pages' => $totalPages,
+        ]);
+    }
     /**
      * وظيفة الاشتراك في كورس.
      */
@@ -28,17 +62,17 @@ class GetController extends Controller
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
         ];
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'courses_id' => 'required|exists:courses,id',
             'phone' => 'required|numeric|digits_between:8,15',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], $massage);
 
-        
+
         if ($validator->fails()) {
             return response()->json([
-                'error'=> $validator->errors()->first(),
+                'error' => $validator->errors()->first(),
             ], 422);
         };
 
@@ -90,7 +124,7 @@ class GetController extends Controller
             'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
         ];
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'courses_id' => 'required|exists:courses,id',
             'phone' => 'required|numeric|digits_between:8,15',
@@ -99,10 +133,10 @@ class GetController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'error'=> $validator->errors()->first(),
+                'error' => $validator->errors()->first(),
             ], 422);
         };
-        
+
         // البحث عن الاشتراك الحالي
         $subscription = Get::where('user_id', $request->user_id)
             ->where('courses_id', $request->courses_id)

@@ -43,6 +43,7 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
 });
 
 Route::group(['prefix'=> 'get','middleware'=>'auth:sanctum'], function () {
+    Route::get('/', [GetController::class, 'index']); 
     Route::post('/', [GetController::class, 'subscribe']); 
     Route::post('/unsubscribe', [GetController::class, 'unsubscribe']); 
     Route::post('/update', [GetController::class, 'updateSubscription']); 

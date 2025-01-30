@@ -13,7 +13,7 @@ class CourseController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = $request->get('per_page', 10);
+        $perPage = $request->get('per_page', default: 8);
         $page = $request->get('page', 1);
         $search = $request->get('search', ''); 
     
