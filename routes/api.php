@@ -45,8 +45,10 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
 Route::group(['prefix'=> 'get','middleware'=>'auth:sanctum'], function () {
     Route::get('/', [GetController::class, 'index']); 
     Route::post('/', [GetController::class, 'subscribe']); 
+    Route::get('edit/{id}', [GetController::class, 'show']);
+    Route::post('/edit/{id}', [GetController::class, 'updateSubscription']); 
+    Route::delete('/{id}', [GetController::class, 'destroy']);
     Route::post('/unsubscribe', [GetController::class, 'unsubscribe']); 
-    Route::post('/update', [GetController::class, 'updateSubscription']); 
     Route::get('/user-courses/{user_id}', [GetController::class, 'getUserCourses']);
     Route::get('/course-users/{courses_id}', [GetController::class, 'getCourseUsers']); 
 });

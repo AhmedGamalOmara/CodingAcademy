@@ -107,10 +107,16 @@ class GetController extends Controller
         return response()->json(['message' => 'تم الاشتراك في الكورس بنجاح.', 'subscription' => $subscription], 201);
     }
 
+    public function show($id)
+    {
+        $user = Get::find($id);
+        return response()->json($user);
+
+    }
     /**
      * وظيفة تحديث الاشتراك في كورس.
      */
-    public function updateSubscription(Request $request)
+    public function updateSubscription(Request $request , $id)
     {
         $messages = [
             'user_id.required' => 'يجب تحديد المستخدم.',
@@ -137,31 +143,82 @@ class GetController extends Controller
             ], 422);
         };
 
-        // البحث عن الاشتراك الحالي
-        $subscription = Get::where('user_id', $request->user_id)
-            ->where('courses_id', $request->courses_id)
-            ->first();
+        // // البحث عن الاشتراك الحالي
+        // $subscription = Get::where('user_id', $request->user_id)
+        //     ->where('courses_id', $request->courses_id)
+        //     ->first();
 
-        if (!$subscription) {
-            return response()->json(['message' => 'لم يتم العثور على اشتراك لهذا المستخدم في هذا الكورس.'], 404);
-        }
+        // if (!$subscription) {
+        //     return response()->json(['message' => 'لم يتم العثور على اشتراك لهذا المستخدم في هذا الكورس.'], 404);
+        // }
+        $booked = Get::findOrFail($id);
+
+        $data = [
+            'user_id' => $request->user_id,
+            'courses_id'=> $request->courses_id,
+            'phone' => $request->phone,
+        ];
 
         // تحديث الصورة إذا تم تحميلها
         if ($request->hasFile('image')) {
             $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
             $request->file('image')->move(public_path('images'), $imageName);
-            $subscription->image = env('APP_URL') . '/public/images/' . $imageName;
+            $data['image'] = env('APP_URL') . '/public/images/' . $imageName;
         }
 
         // تحديث باقي البيانات
-        $subscription->phone = $request->phone;
-        $subscription->save();
+        $booked->update($data);
+       
 
-        return response()->json(['message' => 'تم تحديث بيانات الاشتراك بنجاح.', 'subscription' => $subscription], 200);
+        return response()->json(['message' => 'تم تحديث بيانات الاشتراك بنجاح.', 'subscription' => $booked], 200);
+    }
+
+    public function destroy($id)
+    {
+        $user = Get::findOrFail($id);
+        $user->delete();
+        return response()->json([
+            'succec'=>'تم الغاء الاشتراك بنجاح',
+        ]);
     }
 
 
-    /**
+       /**
+     * وظيفة عرض قائمة المستخدمين  المشتركين فى هذا الكورس.
+     */
+
+     public function getCourseUsers($courses_id)
+     {
+         $course = Course::find($courses_id);
+ 
+         if (!$course) {
+             return response()->json(['message' => 'الكورس غير موجود.'], 404);
+         }
+ 
+         // استرجاع الكورسات التي اشترك فيها المستخدم
+         $courses = $course->subscribers()->with('user')->get();
+ 
+         return response()->json(['message' => 'قائمة المستخدمين المشتركين بهذا الكورس.', 'courses' => $courses]);
+     }
+
+         /**
+     * وظيفة عرض قائمة الكورسات التي اشترك بها المستخدم.
+     */
+    public function getUserCourses($user_id)
+    {
+        $user = User::find($user_id);
+
+        if (!$user) {
+            return response()->json(['message' => 'المستخدم غير موجود.'], 404);
+        }
+
+        // استرجاع الكورسات التي اشترك فيها المستخدم 
+        $courses = $user->subscriptions()->with('course')->get();
+
+        return response()->json(['message' => 'قائمة الكورسات المشترك بها المستخدم.', 'courses' => $courses]);
+    }
+
+        /**
      * وظيفة إلغاء الاشتراك من كورس.
      */
     public function unsubscribe(Request $request)
@@ -191,40 +248,5 @@ class GetController extends Controller
         $subscription->delete();
 
         return response()->json(['message' => 'تم إلغاء الاشتراك من الكورس بنجاح.']);
-    }
-
-    /**
-     * وظيفة عرض قائمة الكورسات التي اشترك بها المستخدم.
-     */
-    public function getUserCourses($user_id)
-    {
-        $user = User::find($user_id);
-
-        if (!$user) {
-            return response()->json(['message' => 'المستخدم غير موجود.'], 404);
-        }
-
-        // استرجاع الكورسات التي اشترك فيها المستخدم 
-        $courses = $user->subscriptions()->with('course')->get();
-
-        return response()->json(['message' => 'قائمة الكورسات المشترك بها المستخدم.', 'courses' => $courses]);
-    }
-
-    /**
-     * وظيفة عرض قائمة المستخدمين  المشتركين فى هذا الكورس.
-     */
-
-    public function getCourseUsers($courses_id)
-    {
-        $course = Course::find($courses_id);
-
-        if (!$course) {
-            return response()->json(['message' => 'الكورس غير موجود.'], 404);
-        }
-
-        // استرجاع الكورسات التي اشترك فيها المستخدم
-        $courses = $course->subscribers()->with('user')->get();
-
-        return response()->json(['message' => 'قائمة المستخدمين المشتركين بهذا الكورس.', 'courses' => $courses]);
     }
 }
