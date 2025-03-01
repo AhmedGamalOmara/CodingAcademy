@@ -2,49 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\models\Team;
 
-class TeamController extends Controller
+class ServiceController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-
-        $search = $request->get('search', '');
-        
-        $team = Team::with('user:id,name')->get();
-
-        if (!empty($search)) {
-            $team->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('id', $search);
-            });
-        }
-        
-        return response()->json([
-            "data" => $team,
-        ]);
+        $traning = Service::all();
+        return response()->json($traning, 200);
     }
-
-    //     $perPage = $request->get('per_page', 10);
-    //     $page = $request->get('page', 1); 
-    
-    //     // $query = Team::query();
-    //     $query = Team::with('user:id,name');
-    //     $total = $query->count(); 
-    //     $data = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
-    
-    //     $totalPages = ceil($total / $perPage);
-    
-    //     return response()->json([
-    //         'data' => $data,
-    //         'current_page' => $page,
-    //         'per_page' => $perPage,
-    //         'total' => $total,
-    //         'total_pages' => $totalPages,
-    //     ]);
-    // }
 
     public function store(Request $request)
     {
@@ -63,17 +31,12 @@ class TeamController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'facebook' => 'nullable',
-            'instagram' => 'nullable',
-            'twitter' => 'nullable',
-            'linkedin' => 'nullable',
-            'user_add_id' => 'nullable',
         ], $messages);
 
         if ($validator->fails()) {
             return response()->json([
                 'error' => $validator->errors()->first(),
-            ], 422);
+            ], 401);
         };
 
         if ($request->hasFile('image')) {
@@ -84,24 +47,19 @@ class TeamController extends Controller
             $imagePath = url('coding_academy/public/images/def.png'); 
         }
 
-        $team = Team::create([
+        $training = Service::create([
             'name' => $request->name,
             'description' => $request->description,
             'image' => $imagePath,
-            'facebook' => $request->facebook,
-            'instagram' => $request->instagram,
-            'twitter' => $request->twitter,
-            'linkedin' => $request->linkedin,
-            'user_add_id' => $request->user_add_id,
         ]);
 
-        return response()->json($team, 200);
+        return response()->json($training, 200);
     }
 
     public function show($id)
     {
-        $team = Team::find($id);
-        return response()->json($team);
+        $traning = Service::findOrFail($id);
+        return response()->json($traning, 200);
     }
 
     public function update(Request $request, $id)
@@ -121,28 +79,18 @@ class TeamController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'facebook' => 'nullable',
-            'instagram' => 'nullable',
-            'twitter' => 'nullable',
-            'linkedin' => 'nullable',
-        ], messages: $messages);
+        ], $messages);
 
         if ($validator->fails()) {
             return response()->json([
                 'error' => $validator->errors()->first(),
-            ], 422);
+            ], 401);
         };
 
-
-        $team = Team::findOrFail($id);
-
+        $training = Service::findOrFail($id);
         $data = [
             'name' => $request->name,
             'description' => $request->description,
-            'facebook' => $request->facebook,
-            'instagram' => $request->instagram,
-            'twitter' => $request->twitter,
-            'linkedin' => $request->linkedin,
         ];
 
         if ($request->hasFile('image')) {
@@ -151,17 +99,17 @@ class TeamController extends Controller
             $data['image'] = env('APP_URL') . '/public/images/' . $imageName;
         }
 
-        $team->update($data);
+        $training->update($data);
 
-        return response()->json($team);
+        return response()->json($training);
     }
 
     public function destroy($id)
     {
-        $team = Team::findOrFail($id);
-        $team->delete();
+        $training = Service::findOrFail($id);
+        $training->delete();
         return response()->json([
-            'succec' => 'بنجاح [ ' . $team->name . ' ] تم حذف  ',
+            'succec' => 'بنجاح [ ' . $training->name . ' ] تم حذف  ',
         ]);
     }
 }

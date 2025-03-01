@@ -164,7 +164,7 @@ class UserController extends Controller
             'email'=> $request->email,
             'phone' => $request->phone,
             'role'=> $request->role,
-            'reservations'=> $request->reservations,
+
         ];
 
         
@@ -182,7 +182,7 @@ class UserController extends Controller
         
         $reservation = $request->input('reservations');
         if (!empty($reservation)) {
-            $date['reservation'] = $reservation;
+            $date['reservations'] = $reservation;
         }
         
         $user->update($date);

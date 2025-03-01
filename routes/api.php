@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LecturerController;
@@ -9,7 +10,9 @@ use App\Http\Controllers\TeachController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\QuestionController;
-
+use App\Http\Controllers\SawController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\TrainingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,11 +46,11 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
 });
 
 Route::group(['prefix'=> 'get','middleware'=>'auth:sanctum'], function () {
-    Route::get('/', [GetController::class, 'index']); 
+    // Route::get('/', [GetController::class, 'index']); 
     Route::post('/', [GetController::class, 'subscribe']); 
     Route::get('edit/{id}', [GetController::class, 'show']);
     Route::post('/edit/{id}', [GetController::class, 'updateSubscription']); 
-    Route::delete('/{id}', [GetController::class, 'destroy']);
+    // Route::delete('/{id}', [GetController::class, 'destroy']);
     Route::post('/unsubscribe', [GetController::class, 'unsubscribe']); 
     Route::get('/user-courses/{user_id}', [GetController::class, 'getUserCourses']);
     Route::get('/course-users/{courses_id}', [GetController::class, 'getCourseUsers']); 
@@ -102,7 +105,24 @@ Route::group(['prefix'=> 'question','middleware'=>'auth:sanctum'], function () {
     Route::post('edit/{id}', [QuestionController::class, 'update']); 
     Route::delete('/{id}', [QuestionController::class, 'destroy']); 
 });
+
 Route::get('question/', [QuestionController::class, 'index']); 
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('saws', SawController::class);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('services', ServiceController::class);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('training', TrainingController::class);
+});
+
+
+Route::apiResource('ContactUs', ContactController::class);
+
 
 
 
