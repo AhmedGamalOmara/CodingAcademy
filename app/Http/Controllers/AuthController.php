@@ -49,8 +49,9 @@ class AuthController extends Controller
 
         // $type = $request->type ?? 0; 
 
-        $imagePath = url('public/images/def.png'); // رابط الصورة الافتراضية بالكامل
+        // $imagePath = url('public/images/def.png'); // رابط الصورة الافتراضية بالكامل
 
+        $imagePath = "";
         // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {
             // رفع الصورة وتخزينها في مجلد التخزين

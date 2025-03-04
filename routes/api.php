@@ -57,11 +57,11 @@ Route::group(['prefix'=> 'get','middleware'=>'auth:sanctum'], function () {
 });
 
 Route::group(['prefix'=> 'course','middleware'=>'auth:sanctum'], function () {
-    Route::get('/', [CourseController::class,'index']);
     Route::post('/', [CourseController::class,'store']);
     Route::post('edit/{id}', [CourseController::class,'update']);
     Route::delete('/{id}', [CourseController::class,'destroy']); 
 });
+Route::get('course/', [CourseController::class,'index']);
 Route::get('/course/edit/{id}', [CourseController::class,'show']);
 
 
@@ -74,51 +74,75 @@ Route::group(['prefix'=> 'teach','middleware'=>'auth:sanctum'], function () {
 });
 
 Route::group(['prefix'=> 'lecturer','middleware'=>'auth:sanctum'], function () {
-    Route::get('/', [LecturerController::class,'index']);
     Route::post('/', [LecturerController::class,'store']);
-    Route::get('edit/{id}', [LecturerController::class,'show']);
     Route::post('edit/{id}', [LecturerController::class,'update']);
     Route::delete('/{id}', [LecturerController::class,'destroy']); 
 });
+Route::get('lecturer/', [LecturerController::class,'index']);
+Route::get('lecturer/edit/{id}', [LecturerController::class,'show']);
 
 Route::group(['prefix'=> 'team','middleware'=>'auth:sanctum'], function () {
     Route::post('/', [TeamController::class,'store']);
-    Route::get('/edit/{id}', [TeamController::class,'show']);
     Route::post('/edit/{id}', [TeamController::class,'update']);
     Route::delete('/{id}', [TeamController::class,'destroy']); 
 });
+Route::get('team/edit/{id}', [TeamController::class,'show']);
 Route::get('team/', [TeamController::class,'index']);
 
 
 Route::group(['prefix'=> 'image','middleware'=>'auth:sanctum'], function () {
     Route::post('/', [ImageController::class, 'store']); 
-    Route::get('/edit/{id}', [ImageController::class,'show']);
     Route::post('edit/{id}', [ImageController::class, 'update']); 
     Route::delete('/{id}', [ImageController::class, 'destroy']); 
 });
+Route::get('image/edit/{id}', [ImageController::class,'show']);
 Route::get('image/', [ImageController::class, 'index']); 
 
 
 Route::group(['prefix'=> 'question','middleware'=>'auth:sanctum'], function () {
     Route::post('/', [QuestionController::class, 'store']); 
-    Route::get('/edit/{id}', [QuestionController::class,'show']);
     Route::post('edit/{id}', [QuestionController::class, 'update']); 
     Route::delete('/{id}', [QuestionController::class, 'destroy']); 
 });
-
+Route::get('question/edit/{id}', [QuestionController::class,'show']);
 Route::get('question/', [QuestionController::class, 'index']); 
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('saws', SawController::class);
-});
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('services', ServiceController::class);
+Route::group(['prefix'=> 'saws','middleware'=>'auth:sanctum'], function () {
+    Route::post('/', [QuestionController::class, 'store']); 
+    Route::post('edit/{id}', [QuestionController::class, 'update']); 
+    Route::delete('/{id}', [QuestionController::class, 'destroy']); 
 });
+Route::get('saws/edit/{id}', [QuestionController::class,'show']);
+Route::get('saws/', [QuestionController::class, 'index']); 
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('training', TrainingController::class);
+
+Route::group(['prefix'=> 'training','middleware'=>'auth:sanctum'], function () {
+    Route::post('/', [QuestionController::class, 'store']); 
+    Route::post('edit/{id}', [QuestionController::class, 'update']); 
+    Route::delete('/{id}', [QuestionController::class, 'destroy']); 
 });
+Route::get('training/edit/{id}', [QuestionController::class,'show']);
+Route::get('training/', [QuestionController::class, 'index']); 
+
+
+Route::group(['prefix'=> 'services','middleware'=>'auth:sanctum'], function () {
+    Route::post('/', [QuestionController::class, 'store']); 
+    Route::post('edit/{id}', [QuestionController::class, 'update']); 
+    Route::delete('/{id}', [QuestionController::class, 'destroy']); 
+});
+Route::get('services/edit/{id}', [QuestionController::class,'show']);
+Route::get('services/', [QuestionController::class, 'index']); 
+
+
+Route::group(['prefix'=> 'JoinUs','middleware'=>'auth:sanctum'], function () {
+    Route::post('/', [QuestionController::class, 'store']); 
+    Route::post('edit/{id}', [QuestionController::class, 'update']); 
+    Route::delete('/{id}', [QuestionController::class, 'destroy']); 
+});
+Route::get('JoinUs/edit/{id}', [QuestionController::class,'show']);
+Route::get('JoinUs/', [QuestionController::class, 'index']); 
+
 
 
 Route::apiResource('ContactUs', ContactController::class);
