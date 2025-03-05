@@ -60,7 +60,7 @@ class BookingController extends Controller
             $course = Course::findOrFail($validatedData['course_id']);
         
             $booking = Booking::create([
-                'course_name' => $course->name,
+                'course_id' => $course->id,
                 'user_name' => $request->user_name,
                 'email' => $request->email,
                 'phone' => $request->phone,
