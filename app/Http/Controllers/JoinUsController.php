@@ -30,7 +30,7 @@ class JoinUsController extends Controller
   
       $validator = Validator::make($request->all(), [
         'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
+        'email' => 'required|string|email|max:255',
       ], $messages);
   
       if ($validator->fails()) {
@@ -83,6 +83,7 @@ class JoinUsController extends Controller
       $date = [
         'name' => $request->name,
         'email' => $request->email,
+
       ];
   
       $user->update($date);

@@ -159,12 +159,12 @@ Route::get('JoinUs/', [JoinUsController::class, 'index']);
 
 
 Route::group(['prefix' => 'booking', 'middleware' => 'auth:sanctum'], function () {
-    Route::get('/', [BookingController::class, 'index']);
     Route::post('/', [BookingController::class, 'store']);
-    Route::get('edit/{id}', [BookingController::class, 'show']);
     Route::post('edit/{id}', [BookingController::class, 'update']);
     Route::delete('/{id}', [BookingController::class, 'destroy']);
 });
+Route::get('booking/', [BookingController::class, 'index']);
+Route::get('booking/edit/{id}', [BookingController::class, 'show']);
 
 
 Route::apiResource('ContactUs', ContactController::class);
