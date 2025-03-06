@@ -38,6 +38,9 @@ class BookingController extends Controller
                 'user_name.required' => 'الاسم مطلوب.',
                 'user_name.string' => 'يجب أن يكون الاسم نصًا.',
                 'user_name.max' => 'يجب ألا يزيد الاسم عن 255 حرفًا.',
+                'course_name.required' => 'الاسم مطلوب.',
+                'course_name.string' => 'يجب أن يكون الاسم نصًا.',
+                'course_name.max' => 'يجب ألا يزيد الاسم عن 255 حرفًا.',
                 'image.required' => 'الصورة مطلوبة.',
                 'image.image' => 'يجب أن تكون الصورة من نوع صورة.',
                 'image.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png, jpg, gif.',
@@ -46,6 +49,7 @@ class BookingController extends Controller
             $validatedData = $request->validate([
                 'course_id' => 'required|exists:courses,id',
                 'user_name' => 'required|string|max:255',
+                'course_name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255',
                 'phone' => 'required|numeric|digits_between:8,15',
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -62,6 +66,7 @@ class BookingController extends Controller
             $booking = Booking::create([
                 'course_id' => $course->id,
                 'user_name' => $request->user_name,
+                'course_name' => $request->course_name,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'image' => $imagePath,
