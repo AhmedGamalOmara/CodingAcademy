@@ -169,6 +169,9 @@ Route::get('booking/edit/{id}', [BookingController::class, 'show']);
 
 Route::apiResource('ContactUs', ContactController::class);
 
+Route::apiResource('Idea', ContactController::class);
+
+
 
 
 
