@@ -8,6 +8,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CustomerSawController;
 use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\GetController;
+use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\TeachController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ImageController;
@@ -169,7 +170,7 @@ Route::get('booking/edit/{id}', [BookingController::class, 'show']);
 
 Route::apiResource('ContactUs', ContactController::class);
 
-Route::apiResource('Idea', ContactController::class);
+Route::apiResource('Idea', IdeaController::class);
 
 
 
